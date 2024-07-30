@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
 
-use App\Controller\Api/PostsController;
+use App\Controller\Api\PostsController;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -12,7 +12,7 @@ use Cake\TestSuite\TestCase;
  *
  * @uses \App\Controller\Api/PostsController
  */
-class Api/PostsControllerTest extends TestCase
+class PostsControllerTest extends TestCase
 {
     use IntegrationTestTrait;
 }

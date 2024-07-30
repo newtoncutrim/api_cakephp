@@ -24,4 +24,6 @@ class UsersControllerTest extends TestCase
     protected $fixtures = [
         'app.Users',
     ];
+
+
 }

@@ -45,11 +45,13 @@ class HomeController extends AppController
      */
     public function view($id = null)
     {
-        $home = $this->Home->get($id, [
-            'contain' => [],
+        $post = $this->Posts->get($id, [
+            'contain' => [
+                'Images',
+            ],
         ]);
 
-        $this->set(compact('home'));
+        $this->set(compact('post'));
     }
 
     /**
@@ -106,13 +108,12 @@ class HomeController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $home = $this->Home->get($id);
-        if ($this->Home->delete($home)) {
-            $this->Flash->success(__('The home has been deleted.'));
+        $post = $this->Posts->get($id);
+        if ($this->Posts->delete($post)) {
+            $this->Flash->success(__('The post has been deleted.'));
         } else {
-            $this->Flash->error(__('The home could not be deleted. Please, try again.'));
+            $this->Flash->error(__('The post could not be deleted. Please, try again.'));
         }
-
         return $this->redirect(['action' => 'index']);
     }
 }

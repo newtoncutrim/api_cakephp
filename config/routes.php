@@ -60,5 +60,12 @@ return function (RouteBuilder $routes): void {
         $routes->fallbacks(DashedRoute::class);
     });
 
-    $routes->connect('/', ['controller' => 'Home', 'action' => 'index'])->setMethods(['get']);
+    $routes->connect('/', ['controller' => 'Home', 'action' => 'index'])
+        ->setMethods(['get']);
+
+    $routes->connect('/posts/view/{id}', ['controller' => 'Home', 'action' => 'view'])
+        ->setMethods(['get'])
+        ->setPass(['id']);
+
+
 };

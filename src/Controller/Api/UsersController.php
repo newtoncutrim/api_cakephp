@@ -41,10 +41,7 @@ class UsersController extends AppController
         $user = $this->Users->get($id);
         $data = $this->request->getData();
 
-
-        Log::info('Data received for update:', $data);
         $user = $this->Users->patchEntity($user, $data);
-        Log::info('User entity after patch:', $user->toArray());
 
         if ($this->Users->save($user)) {
             $response = [
