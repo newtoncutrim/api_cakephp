@@ -3,18 +3,20 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\Routing\Router;
+
 /**
  * Home Controller
  *
- * @method \App\Model\Entity\Home[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ * @method \App\Model\Entity\Post[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
 class HomeController extends AppController
 {
     public function initialize(): void
     {
         parent::initialize();
-        // Carregando o modelo Users
         $this->loadModel('Posts');
+        $this->loadModel('Images');
     }
 
     /**
@@ -26,20 +28,18 @@ class HomeController extends AppController
     {
         $this->request->allowMethod(['get']);
 
-        // Obtém todos os usuários
+
         $posts = $this->Posts->find('all')
-        ->contain('Images') // Inclua as imagens associadas
-        ->toArray();
+            ->contain('Images')
+            ->toArray();
 
-
-        // Passa os dados para a view
         $this->set(compact('posts'));
     }
 
     /**
      * View method
      *
-     * @param string|null $id Home id.
+     * @param string|null $id Post id.
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
@@ -60,48 +60,108 @@ class HomeController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
      */
     public function add()
-    {
-        $home = $this->Home->newEmptyEntity();
-        if ($this->request->is('post')) {
-            $home = $this->Home->patchEntity($home, $this->request->getData());
-            if ($this->Home->save($home)) {
-                $this->Flash->success(__('The home has been saved.'));
+{
+    $post = $this->Posts->newEmptyEntity();
+    if ($this->request->is('post')) {
+        $data = $this->request->getData();
+        $post = $this->Posts->patchEntity($post, $data, ['validate' => true]);
 
-                return $this->redirect(['action' => 'index']);
+        $post->updated_at = new \DateTime();
+
+        if ($this->Posts->save($post)) {
+            $postId = $post->id;
+            $imageUrl = null;
+
+
+            if (!empty($data['image']) && $data['image'] instanceof \Psr\Http\Message\UploadedFileInterface) {
+                $imageFile = $data['image'];
+
+
+                $uploadPath = WWW_ROOT . 'img/uploads/';
+                if (!is_dir($uploadPath)) {
+                    mkdir($uploadPath, 0755, true);
+                }
+
+                $imagePath = $uploadPath . time() . '-' . $imageFile->getClientFilename();
+                $imageFile->moveTo($imagePath);
+
+
+                $image = $this->Images->newEmptyEntity();
+                $imageData = [
+                    'path' => 'img/uploads/' . basename($imagePath),
+                    'post_id' => $postId,
+                    'created_at' => new \DateTime(),
+                    'updated_at' => new \DateTime()
+                ];
+                $image = $this->Images->patchEntity($image, $imageData);
+
+                if ($this->Images->save($image)) {
+                    $imageUrl = Router::url('/img/uploads/' . basename($imagePath), true);
+                }
             }
-            $this->Flash->error(__('The home could not be saved. Please, try again.'));
+
+            $response = [
+                'status' => 'success',
+                'data' => $post,
+                'image' => [
+                    'path' => $imageUrl,
+                    'post_id' => $postId,
+                    'created_at' => $image->created_at ?? null,
+                    'updated_at' => $image->updated_at ?? null,
+                    'id' => $image->id ?? null
+                ]
+            ];
+
+            $this->Flash->success(__('The post has been saved.'));
+            return $this->redirect(['action' => 'index']);
+        } else {
+            $response = [
+                'status' => 'error',
+                'message' => 'Unable to add post',
+                'errors' => $post->getErrors()
+            ];
+
+            $this->Flash->error(__('The post could not be saved. Please, try again.'));
         }
-        $this->set(compact('home'));
+
+        $this->set([
+            'response' => $response,
+            '_serialize' => ['response']
+        ]);
     }
+
+    $this->set(compact('post'));
+}
+
 
     /**
      * Edit method
      *
-     * @param string|null $id Home id.
+     * @param string|null $id Post id.
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function edit($id = null)
     {
-        $home = $this->Home->get($id, [
+        $post = $this->Posts->get($id, [
             'contain' => [],
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $home = $this->Home->patchEntity($home, $this->request->getData());
-            if ($this->Home->save($home)) {
-                $this->Flash->success(__('The home has been saved.'));
+            $post = $this->Posts->patchEntity($post, $this->request->getData());
+            if ($this->Posts->save($post)) {
+                $this->Flash->success(__('The post has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The home could not be saved. Please, try again.'));
+            $this->Flash->error(__('The post could not be saved. Please, try again.'));
         }
-        $this->set(compact('home'));
+        $this->set(compact('post'));
     }
 
     /**
      * Delete method
      *
-     * @param string|null $id Home id.
+     * @param string|null $id Post id.
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */

@@ -1,5 +1,5 @@
 <?php
-// Definindo o layout
+
 $this->layout = 'main';
 ?>
 
@@ -19,7 +19,7 @@ $this->layout = 'main';
 
 <body>
     <header class="tm-header" id="tm-header">
-    <div class="tm-header-wrapper">
+        <div class="tm-header-wrapper">
             <button class="navbar-toggler" type="button" aria-label="Toggle navigation">
                 <i class="fas fa-bars"></i>
             </button>
@@ -30,26 +30,21 @@ $this->layout = 'main';
             <nav class="tm-nav" id="tm-nav">
                 <ul>
                     <li class="tm-nav-item"><a href="<?= $this->Url->build('/'); ?>" class="tm-nav-link">
-                        <i class="fas fa-home"></i>
-                        Blog Home
-                    </a></li>
+                            <i class="fas fa-home"></i>
+                            Blog Home
+                        </a></li>
+
+                        <li class="tm-nav-item"><a href="<?= $this->Url->build('/posts/add'); ?>" class="tm-nav-link">
+                            <i class="fas fa-home"></i>
+                            Add Post
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </div>
     </header>
     <div class="container-fluid">
         <main class="tm-main">
-            <!-- Search form -->
-            <div class="row tm-row">
-                <div class="col-12">
-                    <form method="GET" class="form-inline tm-mb-80 tm-search-form">
-                        <input class="form-control tm-search-input" name="query" type="text" placeholder="Search..." aria-label="Search">
-                        <button class="tm-search-button" type="submit">
-                            <i class="fas fa-search tm-search-icon" aria-hidden="true"></i>
-                        </button>
-                    </form>
-                </div>
-            </div>
             <div class="row tm-row">
                 <?php if (!empty($posts)) : ?>
                     <h1 class="col-12 tm-color-primary tm-post-title tm-mb-60 center">Total Posts: <?= count($posts); ?></h1>
@@ -61,7 +56,7 @@ $this->layout = 'main';
                                 <div class="tm-post-link-inner">
                                     <?php if (!empty($post['images'])) : ?>
                                         <?php foreach ($post['images'] as $image) : ?>
-                                            <img src="<?=  $image['path']; ?>" alt="Image" class="img-fluid">
+                                            <img src="<?= $image['path']; ?>" alt="Image" class="img-fluid">
                                         <?php endforeach; ?>
                                     <?php else : ?>
                                         <img src="<?= $this->Url->build('/img/img-01.jpg'); ?>" alt="Image" class="img-fluid">
@@ -77,7 +72,7 @@ $this->layout = 'main';
                 <?php endif; ?>
             </div>
             <footer class="row tm-row">
-                <!-- Footer content here -->
+
             </footer>
         </main>
     </div>

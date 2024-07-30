@@ -67,5 +67,8 @@ return function (RouteBuilder $routes): void {
         ->setMethods(['get'])
         ->setPass(['id']);
 
+    $routes->connect('/posts/add', ['controller' => 'Home', 'action' => 'add'])
+        ->setMethods(['get', 'post'])
+        ->setExtensions(['json']);
 
 };

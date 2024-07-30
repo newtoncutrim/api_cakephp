@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Model\Table;
@@ -82,9 +83,7 @@ class PostsTable extends Table
 
         $validator
             ->dateTime('updated_at')
-            ->requirePresence('updated_at', 'create')
-            ->notEmptyDateTime('updated_at');
-
+            ->allowEmptyDateTime('updated_at');
         return $validator;
     }
 
