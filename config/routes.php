@@ -35,6 +35,30 @@ return function (RouteBuilder $routes): void {
             ->setMethods(['post'])
             ->setExtensions(['json']);
 
+
+        $routes->connect('/posts', ['controller' => 'Posts', 'action' => 'index'])
+            ->setMethods(['get'])
+            ->setExtensions(['json']);
+
+        $routes->connect('/posts/{id}', ['controller' => 'Posts', 'action' => 'show'])
+            ->setMethods(['get'])
+            ->setPass(['id'])
+            ->setPatterns(['id' => '[0-9]+'])
+            ->setExtensions(['json']);
+        $routes->connect('/posts/{id}/edit', ['controller' => 'Posts', 'action' => 'edit'])
+            ->setMethods(['get', 'post', 'put', 'patch'])
+            ->setPass(['id'])
+            ->setPatterns(['id' => '[0-9]+']);
+        $routes->connect('/posts/{id}/delete', ['controller' => 'Posts', 'action' => 'delete'])
+            ->setMethods(['delete'])
+            ->setPass(['id'])
+            ->setPatterns(['id' => '[0-9]+']);
+        $routes->connect('/posts/add', ['controller' => 'Posts', 'action' => 'store'])
+            ->setMethods(['post'])
+            ->setExtensions(['json']);
+
         $routes->fallbacks(DashedRoute::class);
     });
+
+    $routes->connect('/', ['controller' => 'Home', 'action' => 'index'])->setMethods(['get']);
 };
